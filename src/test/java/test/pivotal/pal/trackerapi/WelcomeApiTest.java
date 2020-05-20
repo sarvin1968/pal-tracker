@@ -19,6 +19,6 @@ public class WelcomeApiTest {
     public void exampleTest() {
         String body = this.restTemplate.getForObject("/", String.class);
         System.out.println(body);
-        //assertThat(body).isEqualTo("hello from build.gradle");
+        assertThat(body).isEqualTo("Hello from test build.gradle");
     }
 }
