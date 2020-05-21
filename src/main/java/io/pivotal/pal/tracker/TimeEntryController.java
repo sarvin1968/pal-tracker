@@ -29,6 +29,8 @@ public class TimeEntryController {
     @PostMapping
     public ResponseEntity create(@RequestBody TimeEntry timeEntryToCreate) {
         TimeEntry createdTimeEntry = timeEntryRepository.create(timeEntryToCreate);
+        actionCounter.increment();
+        timeEntrySummary.record(timeEntryRepository.list().size());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTimeEntry);
     }
 
@@ -36,6 +38,7 @@ public class TimeEntryController {
     public ResponseEntity<TimeEntry> read(@PathVariable long timeEntryId) {
         TimeEntry timeEntry = timeEntryRepository.find(timeEntryId);
         if (timeEntry != null) {
+            actionCounter.increment();
             return ok(timeEntry);
         } else {
             return notFound().build();
@@ -45,6 +48,7 @@ public class TimeEntryController {
     @GetMapping
     public ResponseEntity<List<TimeEntry>> list() {
         List<TimeEntry> list = timeEntryRepository.list();
+        actionCounter.increment();
         return ok(list);
     }
 
@@ -53,6 +57,7 @@ public class TimeEntryController {
         TimeEntry update = timeEntryRepository.update(timeEntryId, expected);
 
         if (update != null) {
+            actionCounter.increment();
             return ok(update);
         } else {
             return notFound().build();
@@ -63,6 +68,8 @@ public class TimeEntryController {
     @DeleteMapping("{timeEntryId}")
     public ResponseEntity delete(@PathVariable long timeEntryId) {
         timeEntryRepository.delete(timeEntryId);
+        actionCounter.increment();
+        timeEntrySummary.record(timeEntryRepository.list().size());
         return noContent().build();
     }
 }
